@@ -2,7 +2,7 @@
 #include <GL/glu.h>
 #include <math.h>
 #include<QDebug>
-#include <iomanip>
+#include<iomanip>
 #include<random>
 #include<iostream>
 
@@ -37,6 +37,7 @@ public:
     void moveright(){transx_+=0.1f;};
     void disp();
     void DrawGyro();
+    void DrawOil();
 
     bool getgyro(){return gyro_;};
     void setgyro(bool b){gyro_=b;};
@@ -48,7 +49,7 @@ public:
     void setoil(int o){oil_=o;}
 
 private:
-    bool gyro_=false;
+    bool gyro_;
     float transx_;
     int oil_;
 };

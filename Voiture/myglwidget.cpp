@@ -1,6 +1,5 @@
 #include "myglwidget.h"
-#include <QApplication>
-#include <QDesktopWidget>
+
 
 // Declarations des constantes
 const unsigned int WIN = 800;
@@ -17,13 +16,16 @@ MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent)
         m_TimeElapsed_ += 1.0f;
         pcar_->setgyro(!pcar_->getgyro());
 
-
+        if (!setnewgame_) gui_->increasetime();
         if(vitesse_!=0 && pcar_->getoil()>0)
         {
             pcar_->setoil(pcar_->getoil()-1);
             //qDebug()<<"oil: "<<pcar_->getoil();
         }
-        gui_->setoil(pcar_->getoil());
+        else if (pcar_->getoil()==0)
+        {
+            newgame(tr("Pensez a faire le plein de temps en temps. Le gazole est a 1.375 seulement !"));
+        }
 
         update();
     });
@@ -37,7 +39,7 @@ MyGLWidget::~MyGLWidget(){
     delete ecar_;
     delete bid_;
     delete ground_;
-    delete imgProc_;
+    delete gui_;
 
 }
 
@@ -52,9 +54,6 @@ void MyGLWidget::initializeGL()
     ground_ = new Ground(&vitesse_);
     bid_ = new Bidon(&vitesse_);
     gui_=new UI(this);
-    int withd[2]={680,640};
-   // imgProc_=new ImageProcessing(withd);
-
 
     glClearColor(.3f,.7f,.9f,1.f);
     glEnable(GL_LIGHTING);
@@ -95,44 +94,64 @@ void MyGLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    gluLookAt(0,4,5,
-              0,1.,0,
+    gluLookAt(0,3.5f,5,
+              0,1,0,
               0,1,0);
 
     ground_->Display();
     pcar_->disp();
-    ecar_->disp();
-    detectcollision();
-    bid_->displayBidon();
-    //imgProc_->Process();
-    if (ecar_->getposz()>10)
+    if(!setnewgame_)
     {
-        //delete ecar_;
-        ecar_ = new EnemyCar(&vitesse_);
+        ecar_->disp();
+        detectcollision();
+        bid_->displayBidon();
+        if(pcar_->gettransx()>3.3f || pcar_->gettransx()<-3.3f)
+        {
 
-    }
-    if (bid_->getposz()>3)
-    {
-
-        //delete bid_;
-        bid_= new Bidon(&vitesse_);
-
+            qDebug("Sortie de route");
+            newgame(tr("Tout le monde conduit mal ici mais faites un effort pour rester sur la route."));
+        }
+        if (ecar_->getposz()>10)
+        {
+            delete ecar_;
+            ecar_ = new EnemyCar(&vitesse_);
+        }
+        if (bid_->getposz()>3)
+        {
+            delete bid_;
+            bid_= new Bidon(&vitesse_);
+        }
     }
 
 }
 
+void MyGLWidget::newgame(QString a)
+{
+    setnewgame_=true;
+    delete pcar_;
+    delete ecar_;
+    delete bid_;
+    vitesse_= 0;
+    pcar_ = new PlayerCar();
+    QMessageBox::information(this,tr("GAME OVER"),a);
+    vitesse_= 1;
+    setnewgame_=false;
+    ecar_ = new EnemyCar(&vitesse_);
+    bid_ = new Bidon(&vitesse_);
+    gui_->resettime();
+}
 
 // Fonction de gestion d'interactions clavier
 void MyGLWidget::keyPressEvent(QKeyEvent * event)
 {
-    qDebug("touche");
+    //qDebug("touche");
     switch(event->key())
     {
         //case Qt::Key_Left:
         case Qt::Key_A:
             if(vitesse_!=0)
             {
-                qDebug("fleche");
+                //qDebug("fleche");
                 pcar_->moveleft();
             }
             break;
@@ -140,7 +159,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent * event)
         case Qt::Key_D:
             if(vitesse_!=0)
             {
-                qDebug("fleche");
+                //qDebug("fleche");
                 pcar_->moveright();
             }
             break;
@@ -189,8 +208,8 @@ void MyGLWidget::mousePressEvent(QMouseEvent *event){
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        gluLookAt(0,4,5,
-                  0,1.,0,
+        gluLookAt(0,3.5f,5,
+                  0,1,0,
                   0,1,0);
 
 
@@ -206,11 +225,14 @@ void MyGLWidget::processHits(GLint hits, GLuint *buffer){
 
 
     if (hits>0){
-        qDebug()<<"Bidon picked ";
-        pcar_->setoil((pcar_->getoil()+70));
-        if(pcar_->getoil()>150)
-            pcar_->setoil(150);
-
+        if(!bid_->getstatus())
+        {
+            qDebug()<<"Bidon picked ";
+            bid_->setstatus(true);
+            pcar_->setoil((pcar_->getoil()+70));
+            if(pcar_->getoil()>150)
+                pcar_->setoil(150);
+        }
     }
     else{
         qDebug()<< "Bidon pas picked ";
@@ -232,6 +254,7 @@ void MyGLWidget::detectcollision()
         if ((xcar<=xene && xcar+0.6f>=xene-0.6f) || (xcar>=xene && xcar-0.6f<=xene+0.6f))
         {
             qDebug("Boom!!");
+            newgame(tr("La facture pour le parchoc va etre salé. Faudrat appeller l'assurance"));
         }
     }
 
@@ -243,6 +266,12 @@ void MyGLWidget::updateDrawing(int direction){
     }
     if(direction==2){
         pcar_->moveright();
+    }
+    if (direction==0){
+        vitesse_=0;
+    }
+    if (direction==3){
+        vitesse_=1;
     }
 
     update();

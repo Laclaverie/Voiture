@@ -2,9 +2,9 @@
     <qresource prefix="/">
         <file>road.jpg</file>
         <file>grass.jpg</file>
-        <file>sky.jpg</file>
+        <file>arret.png</file>
         <file>fuel.jpg</file>
         <file>fist_v3.xml</file>
-        <file>palm_v4.xml</file>
+	<file>stars.jpg</file>
     </qresource>
 </RCC>

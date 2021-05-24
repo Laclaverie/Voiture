@@ -104,7 +104,7 @@ void ImageProcessing::AnalyseRectangle(std::vector<cv::Rect> listRect,bool choix
     }
     else{
         if(listRect.size()==2){
-        direction_=0;
+        direction_=3; // redemarrage
         }
     }
 }

@@ -1,4 +1,4 @@
-#include "Car.h"
+﻿#include "Car.h"
 
 Car::Car()
 {
@@ -7,7 +7,6 @@ Car::Car()
 
 Car::~Car()
 {
-
     gluDeleteQuadric(quad_);
 }
 
@@ -130,14 +129,16 @@ void PlayerCar::disp()
 
     glPushMatrix();
 
-        GLfloat light_voiture[]={1,0.5,0,1};
+        GLfloat light_voiture[]={0,0.5,1,1};
         glMaterialfv(GL_FRONT, GL_AMBIENT, light_voiture);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, light_voiture);
         glMaterialf(GL_FRONT,GL_SHININESS,90);
         glTranslatef(transx_,0,0);
         //qDebug()<< "xcar= "<<transx_;
         Display();
+        DrawOil();
         DrawGyro();
+
 
     glPopMatrix();
 }
@@ -172,7 +173,42 @@ void PlayerCar::DrawGyro()
 
     glPopMatrix();
 }
+void PlayerCar::DrawOil()
+{
+    glBegin(GL_QUADS);
+    glPushMatrix();
+    if(oil_>=(2*150/3))
+    {
+        GLfloat oil_color[]={0,1,0,1};
+        glMaterialfv(GL_FRONT, GL_AMBIENT, oil_color);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, oil_color);
+    }
+    else if (oil_>=150/3)
+    {
+        GLfloat oil_color[]={1,0.5f,0,1};
+        glMaterialfv(GL_FRONT, GL_AMBIENT, oil_color);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, oil_color);
+    }
+    else
+    {
+        GLfloat oil_color[]={1,0,0,1};
+        glMaterialfv(GL_FRONT, GL_AMBIENT, oil_color);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, oil_color);
+    }
 
+
+    glVertex3f(-0.2f,0.3f,1.1f); //bas gauche
+
+    glVertex3f(0.2f,0.3f,1.1f); //bas droite
+
+    glVertex3f(0.2f,(0.3f+(oil_*0.8f/150.0)),1.1f); //haut droite
+
+    glVertex3f(-0.2f,(0.3f+(oil_*0.8f/150.0)),1.1f); //haut gauche
+
+
+    glPopMatrix();
+     glEnd();
+}
 
 
 
@@ -190,7 +226,7 @@ EnemyCar::EnemyCar(float* f) : Car()
     speed_ =f;
     posz_=-200;
 }
-EnemyCar::~EnemyCar(){ delete speed_;}
+EnemyCar::~EnemyCar(){ }
 void EnemyCar::disp()
 {
     glPushMatrix();

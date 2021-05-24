@@ -1,7 +1,7 @@
 #include <QApplication>
 #include "myglwidget.h"
-#include<appmanager.h>
-#include<imageprocessing.h>
+#include "appmanager.h"
+#include "imageprocessing.h"
 
 int main(int argc, char *argv[])
 {

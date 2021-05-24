@@ -1,5 +1,5 @@
-#ifndef GL_H
-#define GL_H
+#ifndef MGL_H
+#define MGL_H
 #include "Car.h"
 #include "Ground.h"
 #include"bidon.h"
@@ -10,7 +10,9 @@
 #include <QTimer>
 #include<QMouseEvent>
 #include<QDebug>
-#include<imageprocessing.h>
+#include <QApplication>
+#include <QDesktopWidget>
+#include<QMessageBox>
 
 
 // Classe dediee a l'affichage d'une scene OpenGL
@@ -24,17 +26,16 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void processHits(GLint hits,GLuint buffer[]);
     void updateDrawing(int d);
-
 private:
     PlayerCar * pcar_;
-    EnemyCar * ecar_; //a enlveer mais for now laisse
+    EnemyCar * ecar_;
     Bidon * bid_;
     float vitesse_;
     UI *gui_;
     Ground * ground_;
     float m_TimeElapsed_ { 0.0f };
     QTimer m_AnimationTimer_;
-    ImageProcessing* imgProc_;
+    bool setnewgame_;
 
 protected:
 
@@ -54,6 +55,7 @@ protected:
 
     //
     void detectcollision();
+    void newgame(QString a);
 
 };
 #endif

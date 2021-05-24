@@ -3,24 +3,35 @@
 Ground::Ground(float* speed)
 {
     vitessep_=speed;
-    Grass_ = QGLWidget::convertToGLFormat(QImage(":/grass.jpg"));
-    Road_ = QGLWidget::convertToGLFormat(QImage(":/road.jpg"));
 
-    texture_ = new GLuint[2];
-    glGenTextures(2, texture_);
+    glEnable(GL_TEXTURE_2D);
 
-    glBindTexture(GL_TEXTURE_2D, texture_[0]);
-    glTexImage2D(GL_TEXTURE_2D,0,4,Grass_.width(),Grass_.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,Grass_.bits());
+    QImage Grass = QGLWidget::convertToGLFormat(QImage(":/grass.jpg"));
+    QImage Road = QGLWidget::convertToGLFormat(QImage(":/road.jpg"));
+    QImage Sky = QGLWidget::convertToGLFormat(QImage(":/stars.jpg"));
+
+    texture = new GLuint[3];
+    glGenTextures(3, texture);
+
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glTexImage2D(GL_TEXTURE_2D,0,4,Grass.width(),Grass.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,Grass.bits());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    glBindTexture(GL_TEXTURE_2D, texture[1]);
+    glTexImage2D(GL_TEXTURE_2D,0,4,Road.width(),Road.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,Road.bits());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
-    glBindTexture(GL_TEXTURE_2D, texture_[1]);
-    glTexImage2D(GL_TEXTURE_2D,0,4,Road_.width(),Road_.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,Road_.bits());
+    glBindTexture(GL_TEXTURE_2D, texture[2]);
+    glTexImage2D(GL_TEXTURE_2D,0,4,Sky.width(),Sky.height(),0,GL_RGBA,GL_UNSIGNED_BYTE,Sky.bits());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 }
 
 Ground::~Ground()
@@ -34,15 +45,35 @@ void Ground::Display()
     shift_=shift_+*vitessep_;
     shift_=shift_-100.f*floor(shift_/100.f);
 
-    glEnable(GL_TEXTURE_2D);
+    //sky
+    glBindTexture(GL_TEXTURE_2D, texture[2]);
+    glBegin(GL_QUADS);
+
+    GLfloat ciel[]={1,1,1,1.0};
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ciel);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, ciel);
+
+    glNormal3f(0,0,1);
+    glTexCoord2f(0,1);
+    glVertex3f(-700,687,-1000.f);
+
+    glTexCoord2f(0,0);
+    glVertex3f(-700,-100,-1000.f);
+
+    glTexCoord2f(1,0);
+    glVertex3f(700,-100,-1000.f);
+
+    glTexCoord2f(1,1);
+    glVertex3f(700,687,-1000.f);
+    glEnd();
 
     // Grass
-    glBindTexture(GL_TEXTURE_2D, texture_[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
     glBegin(GL_QUADS);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
-    GLfloat herbe[]={0,1,0.2,1.0};
+    GLfloat herbe[]={0.3,0.5,0.3,1.0};
     glMaterialfv(GL_FRONT, GL_AMBIENT, herbe);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, herbe);
 
@@ -63,9 +94,9 @@ void Ground::Display()
 
 
     // road
-    glBindTexture(GL_TEXTURE_2D, texture_[1]);
+    glBindTexture(GL_TEXTURE_2D, texture[1]);
     glBegin(GL_QUADS);
-    GLfloat route[]={0.2,0.2,0.2,1.0};
+    GLfloat route[]={0.3,0.3,0.3,1.0};
     glMaterialfv(GL_FRONT, GL_AMBIENT, route);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, route);
 

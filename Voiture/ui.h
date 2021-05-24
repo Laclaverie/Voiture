@@ -2,7 +2,8 @@
 #define UI_H
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGraphicsTextItem>
+#include <QGraphicsSimpleTextItem>
+#include  <tgmath.h>
 
 
 class UI : public QGraphicsView
@@ -11,11 +12,13 @@ public:
     UI(QWidget *parent = 0);
     ~UI();
 
-    void setoil(int l){oillvl_->setPlainText(QString::number(l));}
+    void resettime(){time_->setText("00:00");}
+    void increasetime();
 
 private:
+    QFont * f;
     QGraphicsScene* Scene_;
-    QGraphicsTextItem* oillvl_;
+    QGraphicsSimpleTextItem* time_;
 };
 
 #endif // UI_H

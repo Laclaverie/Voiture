@@ -51,6 +51,5 @@ HEADERS += myglwidget.h \
 RESOURCES += \
     res/textures.qrc
 
-DISTFILES += \
-    res/palm_v4.xml
+DISTFILES +=
 

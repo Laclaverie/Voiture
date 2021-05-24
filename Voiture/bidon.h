@@ -15,14 +15,16 @@ public:
     void displayBidon();
     float getposz(){return posz_;};
 
-private:
+    void setstatus(bool b){picked_=b;};
+    float getstatus(){return picked_;};
 
+private:
+    GLuint* texture;
+    bool picked_=false;
     float *speed_=nullptr;
     float posz_;
     float posx_;
-    QImage fuel_;
     GLUquadric* quadrique_ = gluNewQuadric();
-    GLuint* texture_;
 
     float x_Border_Right_ = 4;
     float x_Border_Left_ = -4;

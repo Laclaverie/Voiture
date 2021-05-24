@@ -16,15 +16,12 @@ public:
 
     // Methode d'affichage
     void Display();
-    void texture();
 
 
 private:
+    GLuint* texture;
     float* vitessep_=nullptr;
     float shift_=0;
-     QImage Grass_ ;
-     QImage Road_;
-     GLuint* texture_;
 
 
 };
