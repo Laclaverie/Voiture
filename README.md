@@ -4,6 +4,12 @@ Contributeurs :
 - Perolynn Seon
 - Pierre Laclaverie
 
+# Sommaire
+- [Sommaire](#sommaire)
+  - [Objectifs](#objectifs)
+- [Cotés rendu](#cotés-rendu)
+- [Cotés acquisition](#cotés-acquisition)
+
 ## Objectifs
 Ce projet a pour but de manipuler OpenCv, les outils QT ainsi que opencv pour la partie commandes. 
 
